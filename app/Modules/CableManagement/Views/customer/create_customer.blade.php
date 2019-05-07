@@ -46,17 +46,117 @@
                     phone: {required: true},
                     subscription_types_id: {required: true},
                     distributors_id: {required: true},
-                    territory: {required: true}
+                    territory_id: {required: true}
                 },
                 messages: {
                     name: {required: "Please enter customer name"},
                     phone: {required: "Please enter phone number"},
                     subscription_types_id: {required: "Please select subscription type"},
                     distributors_id: {required: "Please select a distributor"},
-                    territory: {required: "Please enter the address"},
+                    territory_id: {required: "Please select territory"}
                 }
             });
 
+            var territory = $('#territory'),
+                sector = $('#sector'),
+                road = $('#road'),
+                house = $('#house');
+
+            /**
+             * [init_select initializes select2 on respective select fields and loads data from backend]
+             * @param  {[object]} parameters [Parameters are placeholder, url, selector_id, value_id]
+             * @return {[type]}            [description]
+             */
+            var init_select = function (parameters) {
+                var custom_url = "{{URL::to('/')}}/";
+                var placeholder_text = 'Enter ';
+                parameters.selector_id.select2({
+                    allowClear: true,
+                    placeholder: placeholder_text + parameters.placeholder,
+                    ajax: {
+                        dataType: 'json',
+                        url: custom_url + parameters.url,
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                term: params.term,
+                                value_term: parameters.value_id.val(),
+                                page: params.page
+                            }
+                        },
+                        processResults: function (data, params) {
+                            params.page = params.page || 1;
+                            return {
+                                results: data,
+                                pagination: {
+                                    more: (params.page * 30) < data.total_count
+                                }
+                            };
+                        },
+                        cache: true
+                    }
+                });
+            }
+
+            // ..... Modal scripts start here ..... //
+
+            // Add new territory
+            $('#submit_territory').click(function (event) {
+                event.preventDefault();
+                $.post(
+                    "{{URL::to('/create_territory_process')}}",
+                    $("#territory_modal_form").serialize(),
+                    function (data) {
+                        if (data.status == 'success') {
+                            //append
+                            $('#territory')
+                                .append($("<option></option>")
+                                    .attr("value", data.id)
+                                    .text(data.text));
+
+                            // clear input fields
+                            $('#territory_modal :input').val('');
+                            //close the modal
+                            $('#territory_modal').modal('toggle');
+                        }
+                    }
+                );
+            });
+
+            /* ..... DELETE TERRITORY, SECTOR, ROAD & HOUSE ..... */
+
+            // Load territory data on delete territory modal
+            var delete_territory_modal = $('#delete_territory_modal'),
+                delete_territory_modal_territory = $('#delete_territory_modal_territory');
+
+            // Set the parameters as an object
+            var parameters = {
+                url: '{{URL::to('/auto/territorywhichdoesnthavesector')}}',
+                selector_id: delete_territory_modal,
+                field_id: delete_territory_modal_territory
+            }
+
+            // Pass it as a parameter to init_select
+            // load territory data
+            load_territory_data(parameters);
+
+            // Delete territory which does not have sectors
+            var submit_delete_territory = $('#submit_delete_territory'),
+                delete_territory_modal_form = $('#delete_territory_modal_form');
+
+            // Set the parameters as an object
+            var parameters = {
+                url: '{{URL::to('/delete_territory_process')}}',
+                selector_id: submit_delete_territory,
+                form_id: delete_territory_modal_form,
+                modal_id: delete_territory_modal,
+                option_selector_id: 'delete_territory_modal_territory',
+                territory_field: 'territory'
+            }
+
+            // Pass it as a parameter to init_select
+            // delete territory
+            delete_territory_data(parameters);
 
             /* ..... DELETE TERRITORY, SECTOR, ROAD & HOUSE ..... */
 
@@ -236,7 +336,7 @@
                                value="{{ old('phone') }}">
                     </div>
                     <div class="form-group">
-                        <label>Email</label>
+                        <label>Email*</label>
                         <input type="email" class="form-control" id="email" name="email" placeholder="Enter email">
                     </div>
                     <div class="form-group">
@@ -260,7 +360,7 @@
                     </div>
                     @if(Entrust::hasRole('admin'))
                         <div class="form-group">
-                            <label>Distributor*</label>
+                            <label>Distributor</label>
                             <select class="form-control select2" name="distributors_id" id="distributors_id"></select>
                         </div>
                         <div class="form-group">
@@ -293,27 +393,105 @@
                     </div>
                     <div class="form-group">
                         <label>Territory*</label>
-                        <input type="text" class="form-control" name="territory" id="territory"
-                               placeholder="Enter Address">
+                        <div class="input-group">
+                            <select class="form-control" name="territory_id" id="territory">
+                                @foreach($territory as $terr)
+                                    <option value="{{$terr->id}}">{{$terr->name}}</option>
+                                @endforeach
+                            </select>
+                            <span class="input-group-btn">
+	                        <button type="button" class="btn btn-block btn-info btn-flat" data-toggle="modal"
+                                    data-target="#territory_modal">...</button>
+	                    </span>
+                            <span class="input-group-btn">
+	                        <button type="button" class="btn btn-block btn-danger btn-flat" data-toggle="modal"
+                                    data-target="#delete_territory_modal">X</button>
+	                    </span>
+                        </div>
                     </div>
-
+                    <div class="form-group">
+                        <label>Address*</label>
+                        <input type="text" class="form-control" name="address" id="address" placeholder="Enter Address">
+                    </div>
                 </div>
-                <!-- /.col -->
+                <!-- /.form-group -->
             </div>
-            <!-- /.box-body -->
-            <input type="hidden" name="active" value="1">
+            <!-- /.col -->
+        </div>
+        <!-- /.box-body -->
+        <input type="hidden" name="active" value="1">
 
-            <div class="box-footer">
-                <button type="submit" class="btn btn-primary pull-right">Submit</button>
-            </div>
-            <!-- /.box-footer -->
-            {!! Form::close() !!}
-            {{-- Form ends here --}}
+        <div class="box-footer">
+            <button type="submit" class="btn btn-primary pull-right">Submit</button>
+        </div>
+        <!-- /.box-footer -->
+        {!! Form::close() !!}
+        {{-- Form ends here --}}
         </div>
         <!-- /.box -->
 
         <!-- All Modals -->
+        <!-- Form for Add New Territory Modal  -->
+    {!! Form::open(array('url' => 'create_territory_process', 'id' => 'territory_modal_form')) !!}
+    <!-- Add New Territory Modal -->
+        <div class="modal fade" id="territory_modal" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Add New Territory</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="territory_modal">Territory Name</label>
+                            <input type="text" class="form-control" name="territory_modal" id="territory_modal"
+                                   placeholder="Territory Name">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" id="submit_territory">Submit</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /. Modal content ends here -->
+            </div>
+        </div>
+        <!--  Add New Territory Modal ends here -->
+    {!! Form::close() !!}
+    <!-- /.  Form for Add New Territory Modal ends here -->
 
+        <!-- Form for Delete Territory Modal  -->
+    {!! Form::open(array('url' => 'delete_territory_process', 'id' => 'delete_territory_modal_form')) !!}
+    <!-- Delete Territory Modal -->
+        <div class="modal fade" id="delete_territory_modal" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Delete Territory</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Territory</label>
+                            <select class="form-control select2" name="delete_territory_modal_territory"
+                                    id="delete_territory_modal_territory">
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger" id="submit_delete_territory">Delete</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /. Modal content ends here -->
+            </div>
+        </div>
+        <!--  Delete Territory Modal ends here -->
+    {!! Form::close() !!}
+    <!-- /.  Form for Delete Territory Modal ends here -->
         <!-- All Modals end here -->
 
 

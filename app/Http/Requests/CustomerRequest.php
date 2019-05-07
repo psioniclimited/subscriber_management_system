@@ -26,7 +26,7 @@ class CustomerRequest extends Request {
             'name' => 'required',
             'phone'   => 'required',
             'subscription_types_id' => 'required',
-            'territory' => 'required',
+            'territory_id' => 'required',
         ];
         
         if(Entrust::hasRole('admin'))
