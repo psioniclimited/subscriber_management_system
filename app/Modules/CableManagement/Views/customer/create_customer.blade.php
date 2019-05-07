@@ -413,6 +413,10 @@
                         <label>Address*</label>
                         <input type="text" class="form-control" name="address" id="address" placeholder="Enter Address">
                     </div>
+                    <div class="form-group">
+                        <label>Postal Code</label>
+                        <input type="text" class="form-control" name="postal_code" id="postal_code" placeholder="Postal Code">
+                    </div>
                 </div>
                 <!-- /.form-group -->
             </div>

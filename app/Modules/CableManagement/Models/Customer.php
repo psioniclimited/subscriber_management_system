@@ -9,7 +9,8 @@ class Customer extends Model
 	protected $table = 'customers';
 	protected $primaryKey = 'customers_id';
 
-	protected $fillable = ['name', 'phone', 'email', 'address', 'active', 'nid', 'passport', 'subscription_types_id', 'users_id', 'territory_id', 'sectors_id', 'roads_id', 'houses_id', 'subdistributor'];
+	protected $fillable = ['name', 'phone', 'email', 'address', 'active', 'nid', 'passport', 'subscription_types_id',
+        'users_id', 'territory_id', 'sectors_id', 'roads_id', 'houses_id','postal_code', 'subdistributor'];
 
 	// public function customer_details()
  //    {
