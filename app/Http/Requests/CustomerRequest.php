@@ -25,12 +25,8 @@ class CustomerRequest extends Request {
         $validation = [
             'name' => 'required',
             'phone'   => 'required',
-            'email' => 'required',
             'subscription_types_id' => 'required',
-            'territory_id' => 'required',
-            'sectors_id' => 'required',
-            'roads_id' => 'required',
-            'houses_id' => 'required',
+            'territory' => 'required',
         ];
         
         if(Entrust::hasRole('admin'))

@@ -44,7 +44,6 @@
                 rules: {
                     name: {required: true},
                     phone: {required: true},
-                    email: {required: true},
                     subscription_types_id: {required: true},
                     distributors_id: {required: true},
                     territory: {required: true}
@@ -52,7 +51,6 @@
                 messages: {
                     name: {required: "Please enter customer name"},
                     phone: {required: "Please enter phone number"},
-                    email: {required: "Please enter email"},
                     subscription_types_id: {required: "Please select subscription type"},
                     distributors_id: {required: "Please select a distributor"},
                     territory: {required: "Please enter the address"},
@@ -238,7 +236,7 @@
                                value="{{ old('phone') }}">
                     </div>
                     <div class="form-group">
-                        <label>Email*</label>
+                        <label>Email</label>
                         <input type="email" class="form-control" id="email" name="email" placeholder="Enter email">
                     </div>
                     <div class="form-group">
@@ -262,7 +260,7 @@
                     </div>
                     @if(Entrust::hasRole('admin'))
                         <div class="form-group">
-                            <label>Distributor</label>
+                            <label>Distributor*</label>
                             <select class="form-control select2" name="distributors_id" id="distributors_id"></select>
                         </div>
                         <div class="form-group">
