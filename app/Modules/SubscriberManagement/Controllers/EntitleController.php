@@ -37,7 +37,7 @@ class EntitleController extends Controller {
    		return view('SubscriberManagement::entitle.manage_entitle')
    		->with('products', $products->getProducts())
    		->with('customer_id', $id)
-      ->with(['customer_details' => $customerdetails->getCustomerDetails('customers_id', $id, ['customers_id', 'name', 'phone', 'users_id', 'houses_id'])])
+      ->with(['customer_details' => $customerdetails->getCustomerDetails('customers_id', $id, ['customers_id', 'name', 'phone', 'address','users_id', 'houses_id'])])
       ->with(['card_details' => $customerdetails->getCardDetails('customers_id', $id, ['id', 'card_id', 'blacklisted'])]);
     }
 

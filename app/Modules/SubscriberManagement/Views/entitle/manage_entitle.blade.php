@@ -239,7 +239,7 @@ $(document).ready(function () {
                     </div>
                     <div class="col-sm-2">
                         <strong>Customer Address:</strong>
-                        <p class="text-muted">House-{{$customer_details[0]->house->house}}, Road-{{$customer_details[0]->house->road->road}}, Sector-{{$customer_details[0]->house->road->sector->sector}}, {{$customer_details[0]->house->road->sector->territory->name}}</p>
+                        <p class="text-muted"> {{$customer_details[0]->address}}</p>
                     </div>
                     <div class="col-sm-2">
                         <strong>Distributor:</strong>

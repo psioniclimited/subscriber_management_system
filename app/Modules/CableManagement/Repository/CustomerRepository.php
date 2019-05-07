@@ -17,7 +17,7 @@ class CustomerRepository{
         $customer_details = Customer::with('user', 'house')
         ->where($attribute, $value)
         ->get($columns);
-    	return $customer_details;  		
+    	return $customer_details;
 	}
 
 	/**
