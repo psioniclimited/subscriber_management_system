@@ -35,6 +35,7 @@
             "ajax": {
                 url: '',
                 data: function (data) {
+                    data.card_type = $('#card_type').val();
                     data.distributor_id = $('#distributors_id').val();
                     data.sub_distributor_id = $('#sub_distributors_id').val();
                 }
@@ -179,6 +180,13 @@
           showInputs: false
         });
 
+        $('#show').on('click', function(e){
+            e.preventDefault();
+            // Reload datatable
+            table.ajax.reload();
+            console.log('testing');
+        });
+
     });
 </script>
 
@@ -204,6 +212,27 @@
                     <h3 class="box-title">Cards list</h3>
                 </div>
                 <!-- /.box-header -->
+                <div class="box-body table-responsive">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Card type</label>
+                                <select id="card_type" name="card_type" class="form-control select2" >
+                                    <option selected disabled>Select Type</option>
+                                    <option value="card_no_customer">Cards without customer</option>
+                                    <option value="card_customer">Cards with customer</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <button id="show" class="btn btn-info">Show</button>
+                            <button id="clear_filter" class="btn btn-warning">Clear</button>
+                            <br>
+                        </div>
+                    </div>
+                </div>
                 <div class="box-body">
                     <table id="all_cards_list" class="table table-bordered table-striped">
                             <thead>

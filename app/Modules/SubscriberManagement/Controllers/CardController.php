@@ -28,6 +28,7 @@ class CardController extends Controller {
     public function allCards(Request $request, CardDataTable $dataTable) {
         $dataTable->setDistributor($request->distributor_id);
         $dataTable->setSubDistributor($request->sub_distributor_id);
+        $dataTable->setCardType($request->card_type);
         return $dataTable->render('SubscriberManagement::card.all_cards');
     }
 

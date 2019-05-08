@@ -13,84 +13,87 @@ use \Carbon\Carbon;
 
 class CardDataTable extends DataTable
 {
-    private $distributor, $sub_distributor;
+    private $distributor, $sub_distributor, $card_type;
 
-    public function setDistributor($distributor){
+    public function setDistributor($distributor)
+    {
         $this->distributor = $distributor;
     }
 
-    public function setSubDistributor($sub_distributor){
+    public function setSubDistributor($sub_distributor)
+    {
         $this->sub_distributor = $sub_distributor;
     }
+
+    public function setCardType($card_type)
+    {
+        $this->card_type = $card_type;
+    }
+
     /**
      * Display ajax response.
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function ajax() {
+    public function ajax()
+    {
 
         return $this->datatables->of($this->query())
-        ->addColumn('Subdistributor', function ($cards) {
-            if($cards->subdistributor_user != null) {
-                return $cards->subdistributor_user->name;
-            }
-            else{
-                return 'N/A';
-            }
-        })
-        ->addColumn('Link', function ($cards) {
-            if(Entrust::can('cards.update')) {
-                $action_view = '<a href="' . url('/cards') . '/' . $cards->id . '/edit' . '" class="btn btn-xs btn-primary">
+            ->addColumn('Subdistributor', function ($cards) {
+                if ($cards->subdistributor_user != null) {
+                    return $cards->subdistributor_user->name;
+                } else {
+                    return 'N/A';
+                }
+            })
+            ->addColumn('Link', function ($cards) {
+                if (Entrust::can('cards.update')) {
+                    $action_view = '<a href="' . url('/cards') . '/' . $cards->id . '/edit' . '" class="btn btn-xs btn-primary">
                 <i class="glyphicon glyphicon-edit"></i> Edit
                 </a>';
-            }
-            else{
-                $action_view = 'N/A';
-            }
-            
-            return $action_view;
-        })
-        ->addColumn('Blacklist_link', function ($cards){
-            
-            if($cards->last_blacklist_history != null && Entrust::can('cards.update')){
-                
-                $expired_time = Carbon::parse($cards->last_blacklist_history->expired_time);
-                
-                if($cards->blacklisted == 1 && $expired_time->gt(Carbon::now()) )
-                {
-                    $blacklist_button ='<a class="btn btn-xs btn-warning" id="'.$cards->id.'"
+                } else {
+                    $action_view = 'N/A';
+                }
+
+                return $action_view;
+            })
+            ->addColumn('Blacklist_link', function ($cards) {
+
+                if ($cards->last_blacklist_history != null && Entrust::can('cards.update')) {
+
+                    $expired_time = Carbon::parse($cards->last_blacklist_history->expired_time);
+
+                    if ($cards->blacklisted == 1 && $expired_time->gt(Carbon::now())) {
+                        $blacklist_button = '<a class="btn btn-xs btn-warning" id="' . $cards->id . '"
                         data-toggle="modal" data-target="#confirm_unblacklist">
                         <i class="glyphicon glyphicon-edit"></i> Unblacklist
                         </a>';
 
-                }
-                else{
-                    $blacklist_button ='<a class="btn btn-xs btn-danger" id="'.$cards->id.'"
+                    } else {
+                        $blacklist_button = '<a class="btn btn-xs btn-danger" id="' . $cards->id . '"
                             data-toggle="modal" data-target="#confirm_blacklist">
                             <i class="glyphicon glyphicon-edit"></i> Blacklist
                             </a>';
-                }
-            }
-            else if(Entrust::can('cards.update')){
-                $blacklist_button ='<a class="btn btn-xs btn-danger" id="'.$cards->id.'"
+                    }
+                } else if (Entrust::can('cards.update')) {
+                    $blacklist_button = '<a class="btn btn-xs btn-danger" id="' . $cards->id . '"
                             data-toggle="modal" data-target="#confirm_blacklist">
                             <i class="glyphicon glyphicon-edit"></i> Blacklist
                             </a>';
-            }
-            else {
-                $blacklist_button = "N/A";
-            }
-            return $blacklist_button;
-        })
-        ->addColumn('Fingerprint_link', function($cards){
-            $fingerprint_button = '<a class="btn btn-xs btn-info" id="'.$cards->id.'"
+                } else {
+                    $blacklist_button = "N/A";
+                }
+                return $blacklist_button;
+            })
+            ->addColumn('Fingerprint_link', function ($cards) {
+                $fingerprint_button = '<a class="btn btn-xs btn-info" id="' . $cards->id . '"
                             data-toggle="modal" data-target="#confirm_fingerprint">
                             <i class="glyphicon glyphicon-edit"></i> Fingerprint
                             </a>';
-            return $fingerprint_button;
-        })
-        ->make(true);
-    
+                return $fingerprint_button;
+            })
+            ->make(true);
+
     }
 
     /**
@@ -101,13 +104,36 @@ class CardDataTable extends DataTable
     public function query()
     {
         $user_id = Entrust::user();
-        if(Entrust::hasRole('admin'))
-        	$cards = Card::with('subdistributor_user', 'user','last_blacklist_history');
-        else if(Entrust::hasRole('distributor'))
-            $cards = Card::with('subdistributor_user', 'user','last_blacklist_history')->where('users_id', Entrust::user()->id);
-        else if(Entrust::hasRole('sub_distributor'))
-            $cards = Card::with('subdistributor_user', 'user','last_blacklist_history')->where('subdistributor', Entrust::user()->id);
-        
+        if (Entrust::hasRole('admin')) {
+            $cards = Card::with('subdistributor_user', 'user', 'last_blacklist_history');
+            if($this->card_type != null){
+                if($this->card_type == 'card_no_customer'){
+                    $cards->where("customers_id", null);
+                } else {
+                    $cards->whereNotNull("customers_id");
+                }
+            }
+        } else if (Entrust::hasRole('distributor')) {
+            $cards = Card::with('subdistributor_user', 'user', 'last_blacklist_history')->where('users_id', Entrust::user()->id);
+            if($this->card_type != null){
+                if($this->card_type == 'card_no_customer'){
+                    $cards->where("customers_id", null);
+                } else {
+                    $cards->whereNotNull("customers_id");
+                }
+            }
+        } else if (Entrust::hasRole('sub_distributor')) {
+            $cards = Card::with('subdistributor_user', 'user', 'last_blacklist_history')->where('subdistributor', Entrust::user()->id);
+            if($this->card_type != null){
+                if($this->card_type == 'card_no_customer'){
+                    $cards->where("customers_id", null);
+                } else {
+                    $cards->whereNotNull("customers_id");
+                }
+            }
+        }
+
+
         return $this->applyScopes($cards);
     }
 
@@ -119,11 +145,11 @@ class CardDataTable extends DataTable
     public function html()
     {
         return $this->builder()
-        ->columns($this->getColumns())
-        ->parameters([
-            'dom' => 'Bfrtip',
-            'buttons' => ['csv', 'excel', 'pdf', 'print', 'reset', 'reload']
-        ]);
+            ->columns($this->getColumns())
+            ->parameters([
+                'dom' => 'Bfrtip',
+                'buttons' => ['csv', 'excel', 'pdf', 'print', 'reset', 'reload']
+            ]);
     }
 
     /**
@@ -134,13 +160,13 @@ class CardDataTable extends DataTable
     protected function getColumns()
     {
         return [
-			'card_id' => ['title' => 'Card ID', 'data' => 'card_id'],
+            'card_id' => ['title' => 'Card ID', 'data' => 'card_id'],
             'user.name' => ['title' => 'Distributor', 'data' => 'user.name'],
             'Subdistributor' => ['title' => 'Subdistributor', 'data' => 'subdistributor.name'],
-            'Link' => ['title' => 'Action', 'data' => 'Link', 'orderable'=> false, 'searchable' => false],
-            'Blacklist_link' => ['title' => 'Blacklist', 'data' => 'Blacklist_link', 'orderable'=> false, 'searchable' => false],
-            'Fingerprint_link' => ['title' => 'Fingerprint', 'data' => 'Fingerprint_link', 'orderable'=> false, 'searchable' => false],
-		];
+            'Link' => ['title' => 'Action', 'data' => 'Link', 'orderable' => false, 'searchable' => false],
+            'Blacklist_link' => ['title' => 'Blacklist', 'data' => 'Blacklist_link', 'orderable' => false, 'searchable' => false],
+            'Fingerprint_link' => ['title' => 'Fingerprint', 'data' => 'Fingerprint_link', 'orderable' => false, 'searchable' => false],
+        ];
     }
 
     /**
