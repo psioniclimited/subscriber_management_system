@@ -33,7 +33,6 @@ class EntitleController extends Controller {
      * @return [view]                              [description]
      */
     public function entitleCard(Request $request, $id, CustomerRepository $customerdetails, ProductRepository $products){
-
    		return view('SubscriberManagement::entitle.manage_entitle')
    		->with('products', $products->getProducts())
    		->with('customer_id', $id)
