@@ -212,15 +212,15 @@
                     <h3 class="box-title">Cards list</h3>
                 </div>
                 <!-- /.box-header -->
-                <div class="box-body table-responsive">
+                <div class="box-body">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Card type</label>
                                 <select id="card_type" name="card_type" class="form-control select2" >
                                     <option selected disabled>Select Type</option>
-                                    <option value="card_no_customer">Cards without customer</option>
                                     <option value="card_customer">Cards with customer</option>
+                                    <option value="card_no_customer">Cards without customer</option>
                                 </select>
                             </div>
                         </div>
