@@ -49,6 +49,7 @@ class CustomerController extends Controller
      */
     public function allCustomers(Request $request, CustomerDataTable $dataTable)
     {
+//        dd();
         $dataTable->setCustomerWithCardOption($request->customer_with_card_option);
         return $dataTable->render('CableManagement::customer.all_customers');
     }

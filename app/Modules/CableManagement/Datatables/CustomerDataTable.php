@@ -149,6 +149,7 @@ class CustomerDataTable extends DataTable
             'customers_id' => ['title' => '#', 'data' => 'customers_id'],
             'name' => ['title' => 'Name', 'data' => 'name'],
             'phone' => ['title' => 'Phone', 'data' => 'phone'],
+            'address' => ['title' => 'Address', 'data' => 'address'],
             'card.card_id' => ['title' => 'Card ID', 'data' => 'card.card_id'],
             'user.name' => ['title' => 'Distributor', 'data' => 'user.name'],
             'Subdistributor' => ['title' => 'Subdistributor', 'data' => 'subdistributor.name'],
