@@ -48,7 +48,12 @@ class EntitleController extends Controller {
      * @param  UpdateCommandInformationHelper $updateCommandInformationHelper [description]
      * @return [back]                                                         [description]
      */
-    public function entitleProcess(Request $request, CommandMaker $commandMaker, SocketHelper $socketHelper, UpdateCommandInformationHelper $updateCommandInformationHelper, CardEntitlementRepository $cardEntitlementRepository){
+    public function entitleProcess(
+        Request $request,
+        CommandMaker $commandMaker,
+        SocketHelper $socketHelper,
+        UpdateCommandInformationHelper $updateCommandInformationHelper,
+        CardEntitlementRepository $cardEntitlementRepository){
 
       $customer = Customer::findorFail($request->input('customer_id'));
       $cards = $customer->cards()->get();
@@ -110,11 +115,13 @@ class EntitleController extends Controller {
           }
         }
 
-
       $command_string = $commandMaker->getEntitleCommand($entitle);
       $message = hex2bin($command_string);
-      $response_from_cas = $socketHelper->sendCommandToCas($message);
 
+      // uncomment
+      $response_from_cas = $socketHelper->sendCommandToCas($message);
+        //delete
+//        $response_from_cas = "success";
       $response_from_error = $updateCommandInformationHelper->updateCommandInformation($response_from_cas, $entitle);
 
       return back()->with($response_from_error);

@@ -27,9 +27,6 @@ class CustomerUpdateRequest extends Request {
             'email' => 'required',
             'subscription_types_id' => 'required',
             'territory_id' => 'required',
-            'sectors_id' => 'required',
-            'roads_id' => 'required',
-            'houses_id' => 'required',
         ];
         
         if(Entrust::hasRole('admin'))

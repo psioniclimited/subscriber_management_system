@@ -49,9 +49,6 @@ $(document).ready(function () {
             subscription_types_id: {required: true},
             distributors_id: {required: true},
             territory_id: {required: true},
-            sectors_id: {required: true},
-            roads_id: {required: true},
-            houses_id: {required: true}
         },
         messages: {
             name: {required: "Please enter customer name"},
@@ -60,9 +57,6 @@ $(document).ready(function () {
             subscription_types_id: {required: "Please select subscription type"},
             distributors_id: {required: "Please select a distributor"},
             territory_id: {required: "Please select territory"},
-            sectors_id: {required: "Please select sector"},
-            roads_id: {required: "Please select road"},
-            houses_id: {required: "Please select house"}
         }
     });
     // Define jquery selectors
@@ -891,6 +885,14 @@ $(document).ready(function () {
                     </div>
                 </div>
                 <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter address" value="{{$customer->address}}">
+                </div>
+                <div class="form-group">
+                    <label>Postal Code</label>
+                    <input type="text" class="form-control" id="postal_code" name="postal_code" placeholder="Enter address" value="{{$customer->postal_code}}">
+                </div>
+                <div class="form-group" hidden>
                     <label>Sector*</label>
                     <div class="input-group">
                         <select class="form-control select2" name="sectors_id" id="sector">
@@ -904,7 +906,7 @@ $(document).ready(function () {
                         </span>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" hidden>
                     <label>Road*</label>
                     <div class="input-group">
                         <select class="form-control select2" name="roads_id" id="road">
@@ -919,7 +921,7 @@ $(document).ready(function () {
                     </div>
                 </div>
                 <!-- /.form-group -->
-                <div class="form-group">
+                <div class="form-group" hidden>
                     <label>House*</label>
                     <div class="input-group">
                         <select class="form-control select2" name="houses_id" id="house">
