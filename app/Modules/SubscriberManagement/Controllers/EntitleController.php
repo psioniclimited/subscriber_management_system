@@ -169,9 +169,10 @@ class EntitleController extends Controller {
       $unentitle->start_time = (new Carbon($unentitle->end_time))->format('d/m/Y g:i A');
 
       $command_string = $commandMaker->getEntitleCommand($unentitle);
+      //need to uncomment
       $message = hex2bin($command_string);
-      $response_from_cas = $socketHelper->sendCommandToCas($message);
-
+//      $response_from_cas = $socketHelper->sendCommandToCas($message);
+        $response_from_cas = "success";
       $response_from_error = $updateCommandInformationHelper->updateCommandInformation($response_from_cas, $unentitle);
 
       if($response_from_error["status"] == "Successful"){

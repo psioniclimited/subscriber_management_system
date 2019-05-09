@@ -462,6 +462,27 @@
 
             });
 
+            $('#clear_filter').on('click', function(e){
+                e.preventDefault();
+                // Clear the select2 fields
+                $('#product').val(null).trigger("change");
+
+                // Reload datatable
+                if ($('[name="checkbox_operation"]:checked').val() == '1') {
+                    console.log('working on it');
+                    $('#all_customer_list').DataTable().destroy();
+                    // $('#all_customer_list').html(table_header_with_card);
+                    load_customer_datatable_with_card();
+                } else {
+                    $('#all_customer_list').DataTable().destroy();
+                    // $('#all_customer_list').html(table_header_with_card);
+                    load_customer_datatable_without_card();
+                }
+
+                // Set target bill to 0
+                $('#target_bill').html(0);
+            });
+
         });
     </script>
 

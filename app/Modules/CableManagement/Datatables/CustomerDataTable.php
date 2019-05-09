@@ -117,8 +117,9 @@ class CustomerDataTable extends DataTable
                     $product_type = $this->product_type;
                     $customers->whereHas('card_entitlement_history', function ($q) use ($product_type) {
                         $q->where("products_id", "=", $product_type)
-                        ->whereNotNull("customers_id")
-                        ->whereDate("end_time", ">=", Carbon::today()->toDateString());
+                            ->whereNotNull("customers_id")
+                            ->where("unentitled", "=", 0)
+                            ->whereDate("end_time", ">=", Carbon::today()->toDateString());
                     });
                 }
 
