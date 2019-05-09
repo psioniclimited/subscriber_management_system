@@ -418,6 +418,36 @@
                 radioClass: 'iradio_flat-green'
             });
 
+            var product = $('#product');
+
+            /* get Distributors for Select2 */
+            product.select2({
+                data: [],
+                placeholder: "Select a Product",
+                allowClear: true,
+                ajax: {
+                    dataType: 'json',
+                    url: "{{URL::to('/')}}/auto/product",
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            term: params.term,
+                            page: params.page
+                        }
+                    },
+                    processResults: function (data, params) {
+                        params.page = params.page || 1;
+                        return {
+                            results: data,
+                            pagination: {
+                                more: (params.page * 30) < data.total_count
+                            }
+                        };
+                    },
+                    cache: true
+                }
+            });
+
             $('#show').on('click', function(e){
                 e.preventDefault();
                 // Reload datatable
@@ -465,9 +495,7 @@
                                 <div class="form-group">
                                     <label>Products</label>
                                     <select id="product" name="product" class="form-control select2" >
-                                        <option selected disabled>Select Type</option>
-                                        <option value="1">Basic</option>
-                                        <option value="2">Full</option>
+
                                     </select>
                                 </div>
                             </div>

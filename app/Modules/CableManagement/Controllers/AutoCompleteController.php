@@ -3,6 +3,7 @@
 namespace App\Modules\CableManagement\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\SubscriberManagement\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Modules\SubscriberManagement\Repository\CardRepository;
@@ -142,6 +143,17 @@ class AutoCompleteController extends Controller
         $road = House::whereDoesntHave('customer')
         ->get(['id', 'house as text']);
         return response()->json($road);
+    }
+
+    public function getProduct(Request $request){
+        $search_term = $request->input('term');
+//        dd($search_term);
+
+        $sectors = Product::where('name', "LIKE", "%{$search_term}%")
+            ->get(['product_id as id', 'name as text']);
+
+        return response()->json($sectors);
+
     }
 
 
