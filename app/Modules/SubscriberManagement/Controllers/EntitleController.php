@@ -119,9 +119,9 @@ class EntitleController extends Controller {
       $message = hex2bin($command_string);
 
       // uncomment
-      $response_from_cas = $socketHelper->sendCommandToCas($message);
+//      $response_from_cas = $socketHelper->sendCommandToCas($message);
         //delete
-//        $response_from_cas = "success";
+        $response_from_cas = "success";
       $response_from_error = $updateCommandInformationHelper->updateCommandInformation($response_from_cas, $entitle);
 
       return back()->with($response_from_error);

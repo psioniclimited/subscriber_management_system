@@ -443,6 +443,25 @@
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Packages</label>
+                                    <select id="package" name="package" class="form-control select2" >
+                                        <option selected disabled>Select Type</option>
+                                        <option value="basic">Basic</option>
+                                        <option value="full">Full</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <button id="show" class="btn btn-info">Show</button>
+                                <button id="clear_filter" class="btn btn-warning">Clear</button>
+                                <br>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label>
                                 <input type="radio" name="checkbox_operation" class="flat-red" checked value="1">
