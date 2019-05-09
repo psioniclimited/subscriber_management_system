@@ -184,7 +184,6 @@
             e.preventDefault();
             // Reload datatable
             table.ajax.reload();
-            console.log('testing');
         });
 
     });

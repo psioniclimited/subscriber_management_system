@@ -31,4 +31,9 @@ class CardEntitlementHistory extends Model
     public function operation(){
         return $this->belongsTo('App\Modules\SubscriberManagement\Models\Operation', 'operations_id');
     }
+
+    public function customer()
+    {
+        return $this->belongsTo('App\Modules\CableManagement\Models\Customer', 'customers_id');
+    }
 }

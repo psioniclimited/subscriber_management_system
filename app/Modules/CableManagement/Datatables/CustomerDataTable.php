@@ -3,6 +3,7 @@
 namespace App\Modules\CableManagement\DataTables;
 
 use App\Modules\User\Models\User;
+use Carbon\Carbon;
 use Yajra\Datatables\Services\DataTable;
 use App\Modules\CableManagement\Models\Customer;
 use Entrust;
@@ -10,11 +11,16 @@ use DB;
 
 class CustomerDataTable extends DataTable
 {
-    private $customer_with_card_option;
+    private $customer_with_card_option, $product_type;
 
     public function setCustomerWithCardOption($customer_with_card_option)
     {
         $this->customer_with_card_option = $customer_with_card_option;
+    }
+
+    public function setProductType($product_type)
+    {
+        $this->product_type = $product_type;
     }
 
     /**
@@ -104,10 +110,22 @@ class CustomerDataTable extends DataTable
     {
         $user_id = Entrust::user();
         if (Entrust::hasRole('admin')) {
-            if ($this->customer_with_card_option === "1")
+            if ($this->customer_with_card_option === "1") {
                 $customers = Customer::has('card')->with('card', 'subdistributor_user', 'user');
-            elseif ($this->customer_with_card_option === "2")
+                if ($this->product_type != null && $this->product_type !== '0') {
+//                    dd($this->product_type);
+                    $product_type = $this->product_type;
+                    $customers->whereHas('card_entitlement_history', function ($q) use ($product_type) {
+                        $q->where("products_id", "=", $product_type)
+                        ->whereNotNull("customers_id")
+                        ->whereDate("end_time", ">=", Carbon::today()->toDateString());
+                    });
+                }
+
+            } elseif ($this->customer_with_card_option === "2") {
                 $customers = Customer::doesntHave('card')->with('card', 'subdistributor_user', 'user');
+            }
+
         } else if (Entrust::hasRole('distributor')) {
             if ($this->customer_with_card_option === "1")
                 $customers = Customer::has('card')->with('card', 'subdistributor_user', 'user')->where('users_id', Entrust::user()->id);

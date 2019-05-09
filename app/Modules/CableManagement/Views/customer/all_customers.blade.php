@@ -40,6 +40,7 @@
                     "ajax": {
                         url: '',
                         data: function (data) {
+                            data.product_type = $('#product').val();
                             data.customer_with_card_option = $('[name="checkbox_operation"]:checked').val()
                         }
                     },
@@ -140,6 +141,7 @@
                     "ajax": {
                         url: '',
                         data: function (data) {
+                            data.product_type = '0';
                             data.customer_with_card_option = $('[name="checkbox_operation"]:checked').val()
                         }
                     },
@@ -415,6 +417,21 @@
                 checkboxClass: 'icheckbox_flat-green',
                 radioClass: 'iradio_flat-green'
             });
+
+            $('#show').on('click', function(e){
+                e.preventDefault();
+                // Reload datatable
+                if ($('[name="checkbox_operation"]:checked').val() == '1') {
+                    console.log('working on it');
+                    $('#all_customer_list').DataTable().destroy();
+                    // $('#all_customer_list').html(table_header_with_card);
+                    load_customer_datatable_with_card();
+                }
+
+                // table.ajax.reload();
+
+            });
+
         });
     </script>
 
@@ -446,11 +463,11 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label>Packages</label>
-                                    <select id="package" name="package" class="form-control select2" >
+                                    <label>Products</label>
+                                    <select id="product" name="product" class="form-control select2" >
                                         <option selected disabled>Select Type</option>
-                                        <option value="basic">Basic</option>
-                                        <option value="full">Full</option>
+                                        <option value="1">Basic</option>
+                                        <option value="2">Full</option>
                                     </select>
                                 </div>
                             </div>
