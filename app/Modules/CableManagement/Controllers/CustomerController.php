@@ -52,6 +52,7 @@ class CustomerController extends Controller
 //        dd('sdfsfshflkjasdhfkljsdhfiudhs');
         $dataTable->setCustomerWithCardOption($request->customer_with_card_option);
         $dataTable->setProductType($request->product_type);
+        $dataTable->setActiveType($request->active_type);
         return $dataTable->render('CableManagement::customer.all_customers');
     }
 

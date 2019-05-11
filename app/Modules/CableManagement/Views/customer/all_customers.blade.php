@@ -41,6 +41,7 @@
                         url: '',
                         data: function (data) {
                             data.product_type = $('#product').val();
+                            data.active_type = $('#active-type').val();
                             data.customer_with_card_option = $('[name="checkbox_operation"]:checked').val()
                         }
                     },
@@ -142,6 +143,7 @@
                         url: '',
                         data: function (data) {
                             data.product_type = '0';
+                            data.active_type = $('#active-type').val();
                             data.customer_with_card_option = $('[name="checkbox_operation"]:checked').val()
                         }
                     },
@@ -456,8 +458,12 @@
                     $('#all_customer_list').DataTable().destroy();
                     // $('#all_customer_list').html(table_header_with_card);
                     load_customer_datatable_with_card();
-                    console.log(activeType);
 
+
+                } else {
+                    $('#all_customer_list').DataTable().destroy();
+                    // $('#all_customer_list').html(table_header_with_card);
+                    load_customer_datatable_without_card();
                 }
 
                 // table.ajax.reload();

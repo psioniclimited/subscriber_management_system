@@ -11,7 +11,7 @@ use DB;
 
 class CustomerDataTable extends DataTable
 {
-    private $customer_with_card_option, $product_type;
+    private $customer_with_card_option, $product_type, $active_type;
 
     public function setCustomerWithCardOption($customer_with_card_option)
     {
@@ -21,6 +21,11 @@ class CustomerDataTable extends DataTable
     public function setProductType($product_type)
     {
         $this->product_type = $product_type;
+    }
+
+    public function setActiveType($active_type)
+    {
+        $this->active_type = $active_type;
     }
 
     /**
@@ -122,23 +127,50 @@ class CustomerDataTable extends DataTable
                             ->whereDate("end_time", ">=", Carbon::today()->toDateString());
                     });
                 }
-
             } elseif ($this->customer_with_card_option === "2") {
                 $customers = Customer::doesntHave('card')->with('card', 'subdistributor_user', 'user');
             }
 
         } else if (Entrust::hasRole('distributor')) {
-            if ($this->customer_with_card_option === "1")
+            if ($this->customer_with_card_option === "1") {
                 $customers = Customer::has('card')->with('card', 'subdistributor_user', 'user')->where('users_id', Entrust::user()->id);
-            elseif ($this->customer_with_card_option === "2")
-                $customers = Customer::doesntHave('card')->with('card', 'subdistributor_user', 'user')->where('users_id', Entrust::user()->id);
-        } else if (Entrust::hasRole('sub_distributor')) {
-            if ($this->customer_with_card_option === "1")
-                $customers = Customer::has('card')->with('card', 'subdistributor_user', 'user')->where('subdistributor', Entrust::user()->id);
-            elseif ($this->customer_with_card_option === "2")
-                $customers = Customer::doesntHave('card')->with('card', 'subdistributor_user', 'user')->where('subdistributor', Entrust::user()->id);
-        }
+                if ($this->product_type != null && $this->product_type !== '0') {
+//                    dd($this->product_type);
+                    $product_type = $this->product_type;
+                    $customers->whereHas('card_entitlement_history', function ($q) use ($product_type) {
+                        $q->where("products_id", "=", $product_type)
+                            ->whereNotNull("customers_id")
+                            ->where("unentitled", "=", 0)
+                            ->whereDate("end_time", ">=", Carbon::today()->toDateString());
+                    });
+                }
 
+            } elseif ($this->customer_with_card_option === "2") {
+                $customers = Customer::doesntHave('card')->with('card', 'subdistributor_user', 'user')->where('users_id', Entrust::user()->id);
+            }
+
+        } else if (Entrust::hasRole('sub_distributor')) {
+            if ($this->customer_with_card_option === "1") {
+                $customers = Customer::has('card')->with('card', 'subdistributor_user', 'user')->where('subdistributor', Entrust::user()->id);
+                if ($this->product_type != null && $this->product_type !== '0') {
+//                    dd($this->product_type);
+                    $product_type = $this->product_type;
+                    $customers->whereHas('card_entitlement_history', function ($q) use ($product_type) {
+                        $q->where("products_id", "=", $product_type)
+                            ->whereNotNull("customers_id")
+                            ->where("unentitled", "=", 0)
+                            ->whereDate("end_time", ">=", Carbon::today()->toDateString());
+                    });
+                }
+            } elseif ($this->customer_with_card_option === "2") {
+                $customers = Customer::doesntHave('card')->with('card', 'subdistributor_user', 'user')->where('subdistributor', Entrust::user()->id);
+            }
+
+        }
+        if($this->active_type !=null){
+            $active = $this->active_type;
+            $customers->where('active', $active);
+        }
         return $this->applyScopes($customers);
     }
 
