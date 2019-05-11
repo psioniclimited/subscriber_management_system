@@ -474,6 +474,7 @@
                 e.preventDefault();
                 // Clear the select2 fields
                 $('#product').val(null).trigger("change");
+                $('#active-type').val(null).trigger("change");
 
                 // Reload datatable
                 if ($('[name="checkbox_operation"]:checked').val() == '1') {
