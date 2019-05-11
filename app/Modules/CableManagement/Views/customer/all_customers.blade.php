@@ -449,13 +449,15 @@
             });
 
             $('#show').on('click', function(e){
+                var activeType= $('#active-type').val();
                 e.preventDefault();
                 // Reload datatable
                 if ($('[name="checkbox_operation"]:checked').val() == '1') {
-                    console.log('working on it');
                     $('#all_customer_list').DataTable().destroy();
                     // $('#all_customer_list').html(table_header_with_card);
                     load_customer_datatable_with_card();
+                    console.log(activeType);
+
                 }
 
                 // table.ajax.reload();
@@ -517,6 +519,15 @@
                                     <label>Products</label>
                                     <select id="product" name="product" class="form-control select2" >
 
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Active/Deactivate Customers</label>
+                                    <select id="active-type" name="active-type" class="form-control" >
+                                        <option value="1">Active</option>
+                                        <option value="0">Deactivate</option>
                                     </select>
                                 </div>
                             </div>
