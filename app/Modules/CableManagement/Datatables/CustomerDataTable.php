@@ -11,7 +11,7 @@ use DB;
 
 class CustomerDataTable extends DataTable
 {
-    private $customer_with_card_option, $product_type, $active_type;
+    private $customer_with_card_option, $product_type, $active_type, $end_date;
 
     public function setCustomerWithCardOption($customer_with_card_option)
     {
@@ -26,6 +26,11 @@ class CustomerDataTable extends DataTable
     public function setActiveType($active_type)
     {
         $this->active_type = $active_type;
+    }
+
+    public function setEndDate($end_date)
+    {
+        $this->end_date = $end_date;
     }
 
     /**
@@ -123,8 +128,19 @@ class CustomerDataTable extends DataTable
                     $customers->whereHas('card_entitlement_history', function ($q) use ($product_type) {
                         $q->where("products_id", "=", $product_type)
                             ->whereNotNull("customers_id")
-                            ->where("unentitled", "=", 0)
-                            ->whereDate("end_time", ">=", Carbon::today()->toDateString());
+                            ->where("unentitled", "=", 0);
+
+                        if ($this->end_date != null) {
+                            $explode_date = explode("-", $this->end_date);
+                            $start_date = str_replace(' ', '', $explode_date[0]);
+                            $end_date = str_replace(' ', '', $explode_date[1]);
+                            $begin_time = Carbon::createFromFormat('d/m/Y', $start_date)->setTime(0, 0, 0);
+                            $finish_time = Carbon::createFromFormat('d/m/Y', $end_date)->setTime(23, 59, 59);
+//                            dd($this->end_date);
+                            $q->whereBetween('end_time', [$begin_time, $finish_time]);
+                        } else {
+                            $q->whereDate("end_time", ">=", Carbon::today()->toDateString());
+                        }
                     });
                 }
             } elseif ($this->customer_with_card_option === "2") {
@@ -140,8 +156,18 @@ class CustomerDataTable extends DataTable
                     $customers->whereHas('card_entitlement_history', function ($q) use ($product_type) {
                         $q->where("products_id", "=", $product_type)
                             ->whereNotNull("customers_id")
-                            ->where("unentitled", "=", 0)
-                            ->whereDate("end_time", ">=", Carbon::today()->toDateString());
+                            ->where("unentitled", "=", 0);
+                        if ($this->end_date != null) {
+                            $explode_date = explode("-", $this->end_date);
+                            $start_date = str_replace(' ', '', $explode_date[0]);
+                            $end_date = str_replace(' ', '', $explode_date[1]);
+                            $begin_time = Carbon::createFromFormat('d/m/Y', $start_date)->setTime(0, 0, 0);
+                            $finish_time = Carbon::createFromFormat('d/m/Y', $end_date)->setTime(23, 59, 59);
+//                            dd($this->end_date);
+                            $q->whereBetween('end_time', [$begin_time, $finish_time]);
+                        } else {
+                            $q->whereDate("end_time", ">=", Carbon::today()->toDateString());
+                        }
                     });
                 }
 
@@ -158,8 +184,18 @@ class CustomerDataTable extends DataTable
                     $customers->whereHas('card_entitlement_history', function ($q) use ($product_type) {
                         $q->where("products_id", "=", $product_type)
                             ->whereNotNull("customers_id")
-                            ->where("unentitled", "=", 0)
-                            ->whereDate("end_time", ">=", Carbon::today()->toDateString());
+                            ->where("unentitled", "=", 0);
+                        if ($this->end_date != null) {
+                            $explode_date = explode("-", $this->end_date);
+                            $start_date = str_replace(' ', '', $explode_date[0]);
+                            $end_date = str_replace(' ', '', $explode_date[1]);
+                            $begin_time = Carbon::createFromFormat('d/m/Y', $start_date)->setTime(0, 0, 0);
+                            $finish_time = Carbon::createFromFormat('d/m/Y', $end_date)->setTime(23, 59, 59);
+//                            dd($this->end_date);
+                            $q->whereBetween('end_time', [$begin_time, $finish_time]);
+                        } else {
+                            $q->whereDate("end_time", ">=", Carbon::today()->toDateString());
+                        }
                     });
                 }
             } elseif ($this->customer_with_card_option === "2") {
@@ -167,9 +203,19 @@ class CustomerDataTable extends DataTable
             }
 
         }
-        if($this->active_type !=null){
+        if ($this->active_type != null) {
             $active = $this->active_type;
             $customers->where('active', $active);
+//            if ($this->end_date != null) {
+//                $explode_date = explode("-", $this->end_date);
+//                $start_date = str_replace(' ', '', $explode_date[0]);
+//                $end_date = str_replace(' ', '', $explode_date[1]);
+//                $begin_time = Carbon::createFromFormat('d/m/Y', $start_date)->setTime(0, 0, 0);
+//                $finish_time = Carbon::createFromFormat('d/m/Y', $end_date)->setTime(23, 59, 59);
+////                            dd($this->end_date);
+//                $customers->whereBetween('updated_at', [$begin_time, $finish_time]);
+//            }
+
         }
         return $this->applyScopes($customers);
     }

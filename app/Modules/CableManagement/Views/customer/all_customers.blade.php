@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{asset('plugins/select2/select2.min.css')}}">
     <!-- Bootstrap date picker -->
     <link rel="stylesheet" href="{{asset('plugins/bootstrap-datepicker/css/bootstrap-datepicker3.css')}}">
+    <link rel="stylesheet" href="{{asset('plugins/daterangepicker/daterangepicker.css')}}">
     <!-- Bootstrap time picker -->
     <link rel="stylesheet" href="{{asset('plugins/timepicker/bootstrap-timepicker.min.css')}}">
     <!-- iCheck 1.0.1 -->
@@ -20,6 +21,8 @@
     <script src="{{asset('plugins/datatables/dataTables.bootstrap.min.js')}}"></script>
     <script src="https://cdn.datatables.net/buttons/1.0.3/js/dataTables.buttons.min.js"></script>
     <script src="/vendor/datatables/buttons.server-side.js"></script>
+    <script src="{{asset('plugins/moment/moment.min.js')}}"></script>
+    <script src="{{asset('plugins/daterangepicker/daterangepicker.js')}}"></script>
     <!-- Select2 -->
     <script src="{{asset('plugins/select2/select2.full.js')}}"></script>
     {{-- Moment --}}
@@ -42,6 +45,7 @@
                         data: function (data) {
                             data.product_type = $('#product').val();
                             data.active_type = $('#active-type').val();
+                            data.end_date = $('#datepicker_end_date').val();
                             data.customer_with_card_option = $('[name="checkbox_operation"]:checked').val()
                         }
                     },
@@ -144,6 +148,7 @@
                         data: function (data) {
                             data.product_type = '0';
                             data.active_type = $('#active-type').val();
+                            data.end_date = $('#datepicker_end_date').val();
                             data.customer_with_card_option = $('[name="checkbox_operation"]:checked').val()
                         }
                     },
@@ -229,6 +234,32 @@
                     "buttons": ["csv", "excel", "print", "reset", "reload"]
                 });
             }
+
+            //Date picker start date
+            $('#datepicker_end_date').daterangepicker({
+                autoUpdateInput: false,
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                },
+                locale: {
+                    format: 'DD/MM/YYYY',
+                    cancelLabel: 'Clear'
+                }
+            });
+
+            // Required for Input Initially Empty, starts here
+            $('input[name="datepicker_end_date"]').on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+            });
+
+            $('input[name="datepicker_end_date"]').on('cancel.daterangepicker', function(ev, picker) {
+                $(this).val('');
+            });
 
             // Pair Customer
             $('#confirm_pair').on('shown.bs.modal', function (e) {
@@ -536,6 +567,17 @@
                                         <option value="1">Active</option>
                                         <option value="0">Deactivate</option>
                                     </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Date</label>
+                                    <div class="input-group date">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input type="text" class="form-control pull-right" name="datepicker_end_date" id="datepicker_end_date">
+                                    </div><!-- /.input group -->
                                 </div>
                             </div>
                         </div>
